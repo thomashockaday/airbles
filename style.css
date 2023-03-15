@@ -1,0 +1,23 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+canvas {
+  display: block;
+}
+
+.screen-warning {
+  display: none;
+  padding: 20px;
+}
+
+@media (max-width: 1550px) or (max-height: 750px) {
+  .screen-warning {
+    display: block;
+  }
+
+  canvas {
+    display: none;
+  }
+}
