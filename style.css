@@ -3,8 +3,21 @@
   padding: 0;
 }
 
+body {
+  background-color: #eeeeee;
+}
+
 canvas {
   display: block;
+  border: 5px solid #ffffff;
+  border-radius: 3px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  margin: auto;
 }
 
 .screen-warning {
@@ -12,7 +25,7 @@ canvas {
   padding: 20px;
 }
 
-@media (max-width: 1550px) or (max-height: 750px) {
+@media (max-width: 550px) or (max-height: 750px) {
   .screen-warning {
     display: block;
   }
