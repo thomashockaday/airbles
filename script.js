@@ -7,6 +7,44 @@ canvas.height = 700;
 let step = 0;
 let animationFrame;
 
+const GRAVITY = 0.2;
+
+class Ball {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+
+    this.velocity = {
+      x: 0,
+      y: 0,
+    };
+
+    this.radius = 10;
+    this.colour = "#EA2027";
+  }
+
+  update(ctx) {
+    this.velocity.y += GRAVITY;
+    this.y += this.velocity.y;
+
+    if (this.y + this.radius > canvas.height - 100) {
+      this.y = canvas.height - 100 - this.radius;
+      this.velocity.y = 0;
+    }
+
+    this.draw(ctx);
+  }
+
+  draw(ctx) {
+    ctx.fillStyle = this.colour;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+    ctx.fill();
+  }
+}
+
+const ball = new Ball(100, canvas.height - 200);
+
 function animate() {
   step++;
   animationFrame = requestAnimationFrame(animate);
@@ -34,6 +72,8 @@ function animate() {
   ctx.lineTo(0, canvas.height);
   ctx.lineTo(0, canvas.height - 100);
   ctx.fill();
+
+  ball.update(ctx);
 }
 
 animate();
