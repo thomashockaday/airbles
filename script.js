@@ -27,11 +27,6 @@ class Ball {
     this.velocity.y += GRAVITY;
     this.y += this.velocity.y;
 
-    if (this.y + this.radius > canvas.height - 100) {
-      this.y = canvas.height - 100 - this.radius;
-      this.velocity.y = 0;
-    }
-
     this.draw(ctx);
   }
 
@@ -43,7 +38,56 @@ class Ball {
   }
 }
 
+class Course {
+  constructor(points) {
+    this.points = points;
+
+    this.colour = "#6ab04c";
+  }
+
+  draw(ctx) {
+    ctx.fillStyle = this.colour;
+    ctx.beginPath();
+
+    ctx.moveTo(this.points[0].x, this.points[0].y);
+
+    for (let i = 1; i < this.points.length; i++) {
+      ctx.lineTo(this.points[i].x, this.points[i].y);
+    }
+
+    ctx.fill();
+  }
+}
+
+const points = [
+  {
+    x: 0,
+    y: canvas.height - 100,
+  },
+  {
+    x: canvas.width - 80,
+    y: canvas.height - 100,
+  },
+  {
+    x: canvas.width,
+    y: canvas.height - 180,
+  },
+  {
+    x: canvas.width,
+    y: canvas.height,
+  },
+  {
+    x: 0,
+    y: canvas.height,
+  },
+  {
+    x: 0,
+    y: canvas.height - 100,
+  },
+];
+
 const ball = new Ball(100, canvas.height - 200);
+const course = new Course(points);
 
 function animate() {
   step++;
@@ -55,25 +99,14 @@ function animate() {
   ctx.fillStyle = "#7ed6df";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Course
-  ctx.fillStyle = "#6ab04c";
-  ctx.beginPath();
-  ctx.strokeStyle = "black";
-  ctx.lineWidth = 5;
-  ctx.moveTo(0, canvas.height - 100);
-  ctx.arcTo(
-    canvas.width,
-    canvas.height - 100,
-    canvas.width,
-    canvas.height - 120,
-    canvas.width / 3
-  );
-  ctx.lineTo(canvas.width, canvas.height);
-  ctx.lineTo(0, canvas.height);
-  ctx.lineTo(0, canvas.height - 100);
-  ctx.fill();
-
   ball.update(ctx);
+
+  course.draw(ctx);
+
+  if (ball.y + ball.radius > canvas.height - 100) {
+    ball.y = canvas.height - 100 - ball.radius;
+    ball.velocity.y = 0;
+  }
 }
 
 animate();
