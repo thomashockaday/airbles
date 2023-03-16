@@ -110,3 +110,9 @@ function animate() {
 }
 
 animate();
+
+canvas.addEventListener("click", (event) => {
+  ball.x = event.layerX - ball.radius;
+  ball.y = event.layerY - ball.radius;
+  ball.velocity.y = 0;
+});
