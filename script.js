@@ -23,11 +23,27 @@ class Ball {
     this.colour = "#EA2027";
   }
 
-  update(ctx) {
+  update() {
     this.velocity.y += GRAVITY;
-    this.y += this.velocity.y;
 
-    this.draw(ctx);
+    this.x += this.velocity.x;
+    this.y += this.velocity.y;
+  }
+
+  checkBoundaryCollision(canvas) {
+    if (this.x > canvas.width - this.radius) {
+      this.x = canvas.width - this.radius;
+      this.velocity.x *= -1;
+    } else if (this.x < this.radius) {
+      this.x = this.radius;
+      this.velocity.x *= -1;
+    } else if (this.y > canvas.height - this.radius) {
+      this.y = canvas.height - this.radius;
+      this.velocity.y *= -1;
+    } else if (this.y < this.radius) {
+      this.y = this.radius;
+      this.velocity.y *= -1;
+    }
   }
 
   draw(ctx) {
@@ -70,7 +86,7 @@ const points = [
   },
   {
     x: canvas.width,
-    y: canvas.height - 180,
+    y: canvas.height - 80,
   },
   {
     x: canvas.width,
@@ -99,14 +115,17 @@ function animate() {
   ctx.fillStyle = "#7ed6df";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  ball.update(ctx);
-
-  course.draw(ctx);
+  ball.update();
+  ball.checkBoundaryCollision(canvas);
 
   if (ball.y + ball.radius > canvas.height - 100) {
     ball.y = canvas.height - 100 - ball.radius;
     ball.velocity.y = 0;
+    ball.velocity.x = 0;
   }
+
+  course.draw(ctx);
+  ball.draw(ctx);
 }
 
 animate();
@@ -114,5 +133,6 @@ animate();
 canvas.addEventListener("click", (event) => {
   ball.x = event.layerX - ball.radius;
   ball.y = event.layerY - ball.radius;
-  ball.velocity.y = 0;
+  ball.velocity.y = -2;
+  ball.velocity.x = 4;
 });
