@@ -8,6 +8,8 @@ let step = 0;
 let animationFrame;
 
 const GRAVITY = 0.2;
+const AIR_RESISTANCE = 0.01;
+const SURFACE_FRICTION = 0.08;
 
 class Ball {
   constructor(x, y) {
@@ -25,6 +27,14 @@ class Ball {
 
   update() {
     this.velocity.y += GRAVITY;
+
+    if (this.velocity.x < 0) {
+      this.velocity.x += AIR_RESISTANCE;
+    }
+
+    if (this.velocity.x > 0) {
+      this.velocity.x -= AIR_RESISTANCE;
+    }
 
     this.x += this.velocity.x;
     this.y += this.velocity.y;
@@ -121,7 +131,14 @@ function animate() {
   if (ball.y + ball.radius > canvas.height - 100) {
     ball.y = canvas.height - 100 - ball.radius;
     ball.velocity.y = 0;
-    ball.velocity.x = 0;
+
+    if (ball.velocity.x < 0) {
+      ball.velocity.x += SURFACE_FRICTION;
+    }
+
+    if (ball.velocity.x > 0) {
+      ball.velocity.x -= SURFACE_FRICTION;
+    }
   }
 
   course.draw(ctx);
