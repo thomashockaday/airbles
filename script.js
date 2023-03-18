@@ -11,6 +11,13 @@ const GRAVITY = 0.2;
 const AIR_RESISTANCE = 0.01;
 const SURFACE_FRICTION = 0.08;
 
+class Vector {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+}
+
 class Ball {
   constructor(x, y) {
     this.x = x;
@@ -29,11 +36,11 @@ class Ball {
     this.velocity.y += GRAVITY;
 
     if (this.velocity.x < 0) {
-      this.velocity.x += AIR_RESISTANCE;
+      this.velocity.x += this.grounded ? SURFACE_FRICTION : AIR_RESISTANCE;
     }
 
     if (this.velocity.x > 0) {
-      this.velocity.x -= AIR_RESISTANCE;
+      this.velocity.x -= this.grounded ? SURFACE_FRICTION : AIR_RESISTANCE;
     }
 
     this.x += this.velocity.x;
@@ -64,9 +71,16 @@ class Ball {
   }
 }
 
+class Wall {
+  constructor(x1, y1, x2, y2) {
+    this.start = new Vector(x1, y1);
+    this.end = new Vector(x2, y2);
+  }
+}
+
 class Course {
-  constructor(points) {
-    this.points = points;
+  constructor(walls) {
+    this.walls = walls;
 
     this.colour = "#6ab04c";
   }
@@ -74,11 +88,10 @@ class Course {
   draw(ctx) {
     ctx.fillStyle = this.colour;
     ctx.beginPath();
+    ctx.moveTo(this.walls[0].start.x, this.walls[0].start.y);
 
-    ctx.moveTo(this.points[0].x, this.points[0].y);
-
-    for (let i = 1; i < this.points.length; i++) {
-      ctx.lineTo(this.points[i].x, this.points[i].y);
+    for (let i = 1; i < this.walls.length; i++) {
+      ctx.lineTo(this.walls[i].start.x, this.walls[i].start.y);
     }
 
     ctx.fill();
@@ -91,12 +104,16 @@ const points = [
     y: canvas.height - 100,
   },
   {
-    x: canvas.width - 80,
-    y: canvas.height - 100,
+    x: canvas.width / 3,
+    y: canvas.height - 50,
+  },
+  {
+    x: canvas.width / 1.5,
+    y: canvas.height - 50,
   },
   {
     x: canvas.width,
-    y: canvas.height - 80,
+    y: canvas.height - 200,
   },
   {
     x: canvas.width,
@@ -112,8 +129,15 @@ const points = [
   },
 ];
 
+const walls = [];
+for (let i = 0; i < points.length - 1; i++) {
+  walls.push(
+    new Wall(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y)
+  );
+}
+
 const ball = new Ball(100, canvas.height - 200);
-const course = new Course(points);
+const course = new Course(walls);
 
 function animate() {
   step++;
@@ -127,19 +151,6 @@ function animate() {
 
   ball.update();
   ball.checkBoundaryCollision(canvas);
-
-  if (ball.y + ball.radius > canvas.height - 100) {
-    ball.y = canvas.height - 100 - ball.radius;
-    ball.velocity.y = 0;
-
-    if (ball.velocity.x < 0) {
-      ball.velocity.x += SURFACE_FRICTION;
-    }
-
-    if (ball.velocity.x > 0) {
-      ball.velocity.x -= SURFACE_FRICTION;
-    }
-  }
 
   course.draw(ctx);
   ball.draw(ctx);
