@@ -58,10 +58,10 @@ class Ball {
   }
 
   update() {
+    this.acceleration = this.acceleration.add(new Vector(0, GRAVITY));
     this.acceleration = this.acceleration.unit().multiply(this.speed);
     this.velocity = this.velocity.add(this.acceleration);
     this.velocity = this.velocity.multiply(1 - SURFACE_FRICTION);
-    this.velocity = this.velocity.add(new Vector(0, GRAVITY));
     this.position = this.position.add(this.velocity);
   }
 
@@ -148,7 +148,7 @@ function collDetBw(ball, wall) {
 
 function penResBw(ball, wall) {
   let penVect = ball.position.subtract(closestPointBw(ball, wall));
-  ball.pos = ball.position.add(
+  ball.position = ball.position.add(
     penVect.unit().multiply(ball.radius - penVect.magnitude())
   );
 }
