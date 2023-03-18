@@ -65,22 +65,6 @@ class Ball {
     this.position = this.position.add(this.velocity);
   }
 
-  checkBoundaryCollision(canvas) {
-    if (this.position.x > canvas.width - this.radius) {
-      this.position.x = canvas.width - this.radius;
-      this.velocity.x *= -1;
-    } else if (this.position.x < this.radius) {
-      this.position.x = this.radius;
-      this.velocity.x *= -1;
-    } else if (this.position.y > canvas.height - this.radius) {
-      this.position.y = canvas.height - this.radius;
-      this.velocity.y *= -1;
-    } else if (this.position.y < this.radius) {
-      this.position.y = this.radius;
-      this.velocity.y *= -1;
-    }
-  }
-
   draw(ctx) {
     ctx.fillStyle = this.colour;
     ctx.beginPath();
@@ -192,15 +176,22 @@ const points = [
   },
 ];
 
-const walls = [];
+const boundaryWalls = [
+  new Wall(0, 0, canvas.width, 0),
+  new Wall(canvas.width, 0, canvas.width, canvas.height),
+  new Wall(canvas.width, canvas.height, 0, canvas.height),
+  new Wall(0, canvas.height, 0, 0),
+];
+
+const courseWalls = [];
 for (let i = 0; i < points.length - 1; i++) {
-  walls.push(
+  courseWalls.push(
     new Wall(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y)
   );
 }
 
 const ball = new Ball(100, canvas.height - 200);
-const course = new Course(walls);
+const course = new Course(courseWalls);
 
 function animate() {
   step++;
@@ -213,9 +204,15 @@ function animate() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   ball.update();
-  ball.checkBoundaryCollision(canvas);
 
-  walls.forEach((wall) => {
+  course.walls.forEach((wall) => {
+    if (collDetBw(ball, wall)) {
+      penResBw(ball, wall);
+      collResBw(ball, wall);
+    }
+  });
+
+  boundaryWalls.forEach((wall) => {
     if (collDetBw(ball, wall)) {
       penResBw(ball, wall);
       collResBw(ball, wall);
@@ -232,5 +229,5 @@ canvas.addEventListener("click", (event) => {
   ball.position.x = event.layerX - ball.radius;
   ball.position.y = event.layerY - ball.radius;
   ball.velocity = new Vector(0, 0);
-  ball.acceleration = new Vector(0, 0);
+  ball.acceleration = new Vector(2, -2);
 });
