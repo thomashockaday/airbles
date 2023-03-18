@@ -93,14 +93,24 @@ class Course {
 
   draw(ctx) {
     ctx.fillStyle = this.colour;
-    ctx.beginPath();
-    ctx.moveTo(this.walls[0].start.x, this.walls[0].start.y);
 
-    for (let i = 1; i < this.walls.length; i++) {
-      ctx.lineTo(this.walls[i].start.x, this.walls[i].start.y);
-    }
+    this.walls.forEach((wall) => {
+      ctx.beginPath();
+      ctx.moveTo(wall.start.x, wall.start.y);
+      ctx.lineTo(wall.end.x, wall.end.y);
+      ctx.strokeStyle = "black";
+      ctx.stroke();
+      ctx.closePath();
+    });
 
-    ctx.fill();
+    // ctx.beginPath();
+    // ctx.moveTo(this.walls[0].start.x, this.walls[0].start.y);
+
+    // for (let i = 1; i < this.walls.length; i++) {
+    //   ctx.lineTo(this.walls[i].start.x, this.walls[i].start.y);
+    // }
+
+    // ctx.fill();
   }
 }
 
@@ -145,37 +155,6 @@ function collResBw(ball, wall) {
   ball.velocity = ball.velocity.add(normal.multiply(-vsepDiff));
 }
 
-const points = [
-  {
-    x: 0,
-    y: canvas.height - 100,
-  },
-  {
-    x: canvas.width / 3,
-    y: canvas.height - 50,
-  },
-  {
-    x: canvas.width / 1.5,
-    y: canvas.height - 50,
-  },
-  {
-    x: canvas.width,
-    y: canvas.height - 200,
-  },
-  {
-    x: canvas.width,
-    y: canvas.height,
-  },
-  {
-    x: 0,
-    y: canvas.height,
-  },
-  {
-    x: 0,
-    y: canvas.height - 100,
-  },
-];
-
 const boundaryWalls = [
   new Wall(0, 0, canvas.width, 0),
   new Wall(canvas.width, 0, canvas.width, canvas.height),
@@ -183,12 +162,11 @@ const boundaryWalls = [
   new Wall(0, canvas.height, 0, 0),
 ];
 
-const courseWalls = [];
-for (let i = 0; i < points.length - 1; i++) {
-  courseWalls.push(
-    new Wall(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y)
-  );
-}
+const courseWalls = [
+  new Wall(0, 600, 150, 650),
+  new Wall(150, 650, 350, 650),
+  new Wall(350, 650, 500, 500),
+];
 
 const ball = new Ball(100, canvas.height - 200);
 const course = new Course(courseWalls);
