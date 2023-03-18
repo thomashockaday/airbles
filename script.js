@@ -8,57 +8,75 @@ let step = 0;
 let animationFrame;
 
 const GRAVITY = 0.2;
-const AIR_RESISTANCE = 0.01;
-const SURFACE_FRICTION = 0.08;
+const SURFACE_FRICTION = 0.05;
 
 class Vector {
   constructor(x, y) {
     this.x = x;
     this.y = y;
   }
+
+  add(v) {
+    return new Vector(this.x + v.x, this.y + v.y);
+  }
+
+  subtract(v) {
+    return new Vector(this.x - v.x, this.y - v.y);
+  }
+
+  magnitude() {
+    return Math.sqrt(this.x ** 2 + this.y ** 2);
+  }
+
+  multiply(n) {
+    return new Vector(this.x * n, this.y * n);
+  }
+
+  unit() {
+    if (this.magnitude() === 0) {
+      return new Vector(0, 0);
+    }
+
+    return new Vector(this.x / this.magnitude(), this.y / this.magnitude());
+  }
+
+  static dot(v1, v2) {
+    return v1.x * v2.x + v1.y * v2.y;
+  }
 }
 
 class Ball {
   constructor(x, y) {
-    this.x = x;
-    this.y = y;
+    this.position = new Vector(x, y);
 
-    this.velocity = {
-      x: 0,
-      y: 0,
-    };
-
+    this.elasticity = 1;
+    this.velocity = new Vector(0, 0);
+    this.acceleration = new Vector(0, 0);
+    this.speed = 1;
     this.radius = 10;
     this.colour = "#EA2027";
   }
 
   update() {
-    this.velocity.y += GRAVITY;
-
-    if (this.velocity.x < 0) {
-      this.velocity.x += this.grounded ? SURFACE_FRICTION : AIR_RESISTANCE;
-    }
-
-    if (this.velocity.x > 0) {
-      this.velocity.x -= this.grounded ? SURFACE_FRICTION : AIR_RESISTANCE;
-    }
-
-    this.x += this.velocity.x;
-    this.y += this.velocity.y;
+    this.acceleration = this.acceleration.unit().multiply(this.speed);
+    this.velocity = this.velocity.add(this.acceleration);
+    this.velocity = this.velocity.multiply(1 - SURFACE_FRICTION);
+    this.velocity = this.velocity.add(new Vector(0, GRAVITY));
+    this.position = this.position.add(this.velocity);
   }
 
   checkBoundaryCollision(canvas) {
-    if (this.x > canvas.width - this.radius) {
-      this.x = canvas.width - this.radius;
+    if (this.position.x > canvas.width - this.radius) {
+      this.position.x = canvas.width - this.radius;
       this.velocity.x *= -1;
-    } else if (this.x < this.radius) {
-      this.x = this.radius;
+    } else if (this.position.x < this.radius) {
+      this.position.x = this.radius;
       this.velocity.x *= -1;
-    } else if (this.y > canvas.height - this.radius) {
-      this.y = canvas.height - this.radius;
+    } else if (this.position.y > canvas.height - this.radius) {
+      this.position.y = canvas.height - this.radius;
       this.velocity.y *= -1;
-    } else if (this.y < this.radius) {
-      this.y = this.radius;
+    } else if (this.position.y < this.radius) {
+      this.position.y = this.radius;
       this.velocity.y *= -1;
     }
   }
@@ -66,7 +84,7 @@ class Ball {
   draw(ctx) {
     ctx.fillStyle = this.colour;
     ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+    ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
     ctx.fill();
   }
 }
@@ -75,6 +93,10 @@ class Wall {
   constructor(x1, y1, x2, y2) {
     this.start = new Vector(x1, y1);
     this.end = new Vector(x2, y2);
+  }
+
+  unit() {
+    return this.end.subtract(this.start).unit();
   }
 }
 
@@ -96,6 +118,47 @@ class Course {
 
     ctx.fill();
   }
+}
+
+function closestPointBw(ball, wall) {
+  let ballToWallStart = wall.start.subtract(ball.position);
+  if (Vector.dot(wall.unit(), ballToWallStart) > 0) {
+    return wall.start;
+  }
+
+  let wallEndToBall = ball.position.subtract(wall.end);
+  if (Vector.dot(wall.unit(), wallEndToBall) > 0) {
+    return wall.end;
+  }
+
+  let closestDist = Vector.dot(wall.unit(), ballToWallStart);
+  let closestVect = wall.unit().multiply(closestDist);
+  return wall.start.subtract(closestVect);
+}
+
+function collDetBw(ball, wall) {
+  let ballToClosest = closestPointBw(ball, wall).subtract(ball.position);
+
+  if (ballToClosest.magnitude() <= ball.radius) {
+    return true;
+  }
+
+  return false;
+}
+
+function penResBw(ball, wall) {
+  let penVect = ball.position.subtract(closestPointBw(ball, wall));
+  ball.pos = ball.position.add(
+    penVect.unit().multiply(ball.radius - penVect.magnitude())
+  );
+}
+
+function collResBw(ball, wall) {
+  let normal = ball.position.subtract(closestPointBw(ball, wall)).unit();
+  let sepVel = Vector.dot(ball.velocity, normal);
+  let newSepVel = -sepVel * ball.elasticity;
+  let vsepDiff = sepVel - newSepVel;
+  ball.velocity = ball.velocity.add(normal.multiply(-vsepDiff));
 }
 
 const points = [
@@ -152,6 +215,13 @@ function animate() {
   ball.update();
   ball.checkBoundaryCollision(canvas);
 
+  walls.forEach((wall) => {
+    if (collDetBw(ball, wall)) {
+      penResBw(ball, wall);
+      collResBw(ball, wall);
+    }
+  });
+
   course.draw(ctx);
   ball.draw(ctx);
 }
@@ -159,8 +229,8 @@ function animate() {
 animate();
 
 canvas.addEventListener("click", (event) => {
-  ball.x = event.layerX - ball.radius;
-  ball.y = event.layerY - ball.radius;
-  ball.velocity.y = -2;
-  ball.velocity.x = 4;
+  ball.position.x = event.layerX - ball.radius;
+  ball.position.y = event.layerY - ball.radius;
+  ball.velocity = new Vector(0, 0);
+  ball.acceleration = new Vector(0, 0);
 });
