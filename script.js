@@ -5,7 +5,6 @@ canvas.width = 500;
 canvas.height = 700;
 
 let step = 0;
-let animationFrame;
 
 const GRAVITY = 0.2;
 const SURFACE_FRICTION = 0.05;
@@ -98,19 +97,19 @@ class Course {
       ctx.beginPath();
       ctx.moveTo(wall.start.x, wall.start.y);
       ctx.lineTo(wall.end.x, wall.end.y);
-      ctx.strokeStyle = "black";
-      ctx.stroke();
+      // ctx.strokeStyle = "black";
+      // ctx.stroke();
       ctx.closePath();
     });
 
-    // ctx.beginPath();
-    // ctx.moveTo(this.walls[0].start.x, this.walls[0].start.y);
+    ctx.beginPath();
+    ctx.moveTo(this.walls[0].start.x, this.walls[0].start.y);
 
-    // for (let i = 1; i < this.walls.length; i++) {
-    //   ctx.lineTo(this.walls[i].start.x, this.walls[i].start.y);
-    // }
+    for (let i = 1; i < this.walls.length; i++) {
+      ctx.lineTo(this.walls[i].start.x, this.walls[i].start.y);
+    }
 
-    // ctx.fill();
+    ctx.fill();
   }
 }
 
@@ -163,9 +162,21 @@ const boundaryWalls = [
 ];
 
 const courseWalls = [
-  new Wall(0, 600, 150, 650),
-  new Wall(150, 650, 350, 650),
-  new Wall(350, 650, 500, 500),
+  new Wall(0, 600, 50, 600),
+  new Wall(50, 600, 100, 590),
+  new Wall(100, 590, 150, 570),
+  new Wall(150, 570, 200, 540),
+  new Wall(200, 540, 250, 500),
+  new Wall(250, 500, 300, 450),
+  new Wall(300, 450, 350, 390),
+  new Wall(350, 390, 400, 320),
+  new Wall(400, 320, 450, 240),
+  new Wall(450, 240, 500, 150),
+  new Wall(500, 150, 550, 50),
+  new Wall(550, 50, 600, 0),
+  new Wall(600, 0, 600, 700),
+  new Wall(600, 700, 0, 700),
+  new Wall(0, 700, 0, 50),
 ];
 
 const ball = new Ball(100, canvas.height - 200);
@@ -173,7 +184,7 @@ const course = new Course(courseWalls);
 
 function animate() {
   step++;
-  animationFrame = requestAnimationFrame(animate);
+  requestAnimationFrame(animate);
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -201,7 +212,7 @@ function animate() {
   ball.draw(ctx);
 }
 
-animate();
+requestAnimationFrame(animate);
 
 canvas.addEventListener("click", (event) => {
   ball.position.x = event.layerX - ball.radius;
