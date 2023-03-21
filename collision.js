@@ -1,80 +1,105 @@
-function closestPointBw(ball, wall) {
-  let ballToWallStart = wall.start.subtract(ball.position);
-  if (Vector.dot(wall.unit(), ballToWallStart) > 0) {
-    return wall.start;
+function collide(o1, o2) {
+  let bestSat = {
+    pen: null,
+    axis: null,
+    vertex: null,
+  };
+
+  for (let o1comp = 0; o1comp < o1.components.length; o1comp++) {
+    for (let o2comp = 0; o2comp < o2.components.length; o2comp++) {
+      if (sat(o1.components[o1comp], o2.components[o2comp]).pen > bestSat.pen) {
+        bestSat = sat(o1.components[o1comp], o2.components[o2comp]);
+      }
+    }
   }
 
-  let wallEndToBall = ball.position.subtract(wall.end);
-  if (Vector.dot(wall.unit(), wallEndToBall) > 0) {
-    return wall.end;
+  if (bestSat.pen !== null) {
+    return bestSat;
   }
 
-  let closestDist = Vector.dot(wall.unit(), ballToWallStart);
-  let closestVect = wall.unit().multiply(closestDist);
-  return wall.start.subtract(closestVect);
-}
-
-function penResBw(ball, wall) {
-  let penVect = ball.position.subtract(closestPointBw(ball, wall));
-  ball.position = ball.position.add(
-    penVect.unit().multiply(10 - penVect.magnitude())
-  );
-}
-
-function collResBw(ball, wall) {
-  let normal = ball.position.subtract(closestPointBw(ball, wall)).unit();
-  let sepVel = Vector.dot(ball.velocity, normal);
-  let newSepVel = -sepVel * ball.elasticity;
-  let vsepDiff = sepVel - newSepVel;
-  ball.velocity = ball.velocity.add(normal.multiply(-vsepDiff));
+  return false;
 }
 
 function sat(o1, o2) {
-  const axes1 = [];
-  const axes2 = [];
+  let minOverlap = null;
+  let smallestAxis = null;
+  let vertexObj = null;
 
-  axes1.push(
-    closestVertexToPoint(o2, o1.position).subtract(o1.position).unit()
-  );
-  axes2.push(o2.direction.normal());
-
+  let axes = findAxes(o1, o2);
   let proj1 = 0;
   let proj2 = 0;
+  let firstShapeAxes = 1;
 
-  for (let i = 0; i < axes1.length; i++) {
-    proj1 = projShapeOntoAxis(axes1[i], o1);
-    proj2 = projShapeOntoAxis(axes1[i], o2);
+  for (let i = 0; i < axes.length; i++) {
+    proj1 = projShapeOntoAxis(axes[i], o1);
+    proj2 = projShapeOntoAxis(axes[i], o2);
     let overlap =
       Math.min(proj1.max, proj2.max) - Math.max(proj1.min, proj2.min);
 
     if (overlap < 0) {
       return false;
     }
-  }
 
-  for (let i = 0; i < axes2.length; i++) {
-    proj1 = projShapeOntoAxis(axes2[i], o1);
-    proj2 = projShapeOntoAxis(axes2[i], o2);
-    overlap = Math.min(proj1.max, proj2.max) - Math.max(proj1.min, proj2.min);
+    if (
+      (proj1.max > proj2.max && proj1.min < proj2.min) ||
+      (proj1.max < proj2.max && proj1.min > proj2.min)
+    ) {
+      let mins = Math.abs(proj1.min - proj2.min);
+      let maxs = Math.abs(proj1.max - proj2.max);
 
-    if (overlap < 0) {
-      return false;
+      if (mins < maxs) {
+        overlap += mins;
+      } else {
+        overlap += maxs;
+        axes[i] = axes[i].multiply(-1);
+      }
+    }
+
+    if (overlap < minOverlap || minOverlap === null) {
+      minOverlap = overlap;
+      smallestAxis = axes[i];
+
+      if (i < firstShapeAxes) {
+        vertexObj = o2;
+
+        if (proj1.max > proj2.max) {
+          smallestAxis = axes[i].multiply(-1);
+        }
+      } else {
+        vertexObj = o1;
+
+        if (proj1.max < proj2.max) {
+          smallestAxis = axes[i].multiply(-1);
+        }
+      }
     }
   }
 
-  return true;
+  let contactVertex = projShapeOntoAxis(smallestAxis, vertexObj).collVertex;
+
+  if (vertexObj === o2) {
+    smallestAxis = smallestAxis.multiply(-1);
+  }
+
+  return {
+    pen: minOverlap,
+    axis: smallestAxis,
+    vertex: contactVertex,
+  };
 }
 
 function projShapeOntoAxis(axis, o) {
   setBallVerticesAlongAxis(o, axis);
   let min = Vector.dot(axis, o.vertex[0]);
   let max = min;
+  let collVertex = o.vertex[0];
 
   for (let i = 0; i < o.vertex.length; i++) {
     let p = Vector.dot(axis, o.vertex[i]);
 
     if (p < min) {
       min = p;
+      collVertex = o.vertex[i];
     }
 
     if (p > max) {
@@ -85,7 +110,43 @@ function projShapeOntoAxis(axis, o) {
   return {
     min: min,
     max: max,
+    collVertex: collVertex,
   };
+}
+
+function findAxes(o1, o2) {
+  let axes = [];
+
+  if (o1 instanceof Circle && o2 instanceof Circle) {
+    if (o2.position.subtract(o1.position).magnitude() > 0) {
+      axes.push(o2.position.subtract(o1.position).unit());
+    } else {
+      axes.push(new Vector(Math.random(), Math.random()).unit());
+    }
+    return axes;
+  }
+
+  if (o1 instanceof Circle) {
+    axes.push(
+      closestVertexToPoint(o2, o1.position).subtract(o1.position).unit()
+    );
+  }
+
+  if (o1 instanceof Line) {
+    axes.push(o1.direction.normal());
+  }
+
+  if (o2 instanceof Circle) {
+    axes.push(
+      closestVertexToPoint(o1, o2.position).subtract(o2.position).unit()
+    );
+  }
+
+  if (o2 instanceof Line) {
+    axes.push(o2.direction.normal());
+  }
+
+  return axes;
 }
 
 function closestVertexToPoint(o, point) {

@@ -1,8 +1,14 @@
 class Ball extends Body {
-  constructor(x, y, radius) {
+  constructor(x, y, radius, mass) {
     super();
     this.components = [new Circle(x, y, radius)];
     this.position = new Vector(x, y);
+    this.mass = mass;
+    if (this.mass === 0) {
+      this.inverseMass = 0;
+    } else {
+      this.inverseMass = 1 / this.mass;
+    }
     this.colour = "#EA2027";
   }
 

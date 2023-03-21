@@ -2,11 +2,6 @@ class Wall extends Body {
   constructor(x1, y1, x2, y2) {
     super();
     this.components = [new Line(x1, y1, x2, y2)];
-    this.start = new Vector(x1, y1);
-    this.end = new Vector(x2, y2);
-  }
-
-  unit() {
-    return this.end.subtract(this.start).unit();
+    this.position = new Vector((x1 + x2) / 2, (y1 + y2) / 2);
   }
 }

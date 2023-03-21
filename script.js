@@ -8,6 +8,8 @@ let step = 0;
 
 const GRAVITY = 0.2;
 
+let COLLISIONS = [];
+
 const boundaryWalls = [
   new Wall(0, 0, canvas.width, 0),
   new Wall(canvas.width, 0, canvas.width, canvas.height),
@@ -16,48 +18,62 @@ const boundaryWalls = [
 ];
 
 const COURSE_BODIES = [
-  new Wall(0, 600, 50, 600),
-  new Wall(50, 600, 100, 590),
-  new Wall(100, 590, 150, 570),
-  new Wall(150, 570, 200, 540),
-  new Wall(200, 540, 250, 500),
-  new Wall(250, 500, 300, 450),
-  new Wall(300, 450, 350, 390),
-  new Wall(350, 390, 400, 320),
-  new Wall(400, 320, 450, 240),
-  new Wall(450, 240, 500, 150),
-  new Wall(500, 150, 550, 50),
-  new Wall(550, 50, 600, 0),
+  new Wall(0, 600, 500, 600),
+  // new Wall(50, 600, 100, 590),
+  // new Wall(100, 590, 150, 570),
+  // new Wall(150, 570, 200, 540),
+  // new Wall(200, 540, 250, 500),
+  // new Wall(250, 500, 300, 450),
+  // new Wall(300, 450, 350, 390),
+  // new Wall(350, 390, 400, 320),
+  // new Wall(400, 320, 450, 240),
+  // new Wall(450, 240, 500, 150),
+  // new Wall(500, 150, 550, 50),
+  // new Wall(550, 50, 600, 0),
 ];
 
-const ball = new Ball(100, canvas.height - 200, 10);
+const ball = new Ball(100, canvas.height - 200, 10, 5);
+ball.maxSpeed = 10;
 const course = new Course(COURSE_BODIES);
 
 function animate() {
   step++;
   requestAnimationFrame(animate);
 
+  COLLISIONS = [];
+
+  ball.update();
+
+  course.bodies.forEach((body) => {
+    let bestSat = collide(ball, body);
+
+    if (bestSat) {
+      COLLISIONS.push(
+        new CollisionData(ball, body, bestSat.axis, bestSat.pen, bestSat.vertex)
+      );
+    }
+  });
+
+  boundaryWalls.forEach((wall) => {
+    let bestSat = collide(ball, wall);
+
+    if (bestSat) {
+      COLLISIONS.push(
+        new CollisionData(ball, wall, bestSat.axis, bestSat.pen, bestSat.vertex)
+      );
+    }
+  });
+
+  COLLISIONS.forEach((collision) => {
+    collision.penetrationResolution();
+    collision.collisionResolution();
+  });
+
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   // Sky
   ctx.fillStyle = "#7ed6df";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  ball.update();
-
-  course.bodies.forEach((body) => {
-    if (sat(ball.components[0], body.components[0])) {
-      penResBw(ball, body);
-      collResBw(ball, body);
-    }
-  });
-
-  boundaryWalls.forEach((wall) => {
-    if (sat(ball.components[0], wall.components[0])) {
-      penResBw(ball, wall);
-      collResBw(ball, wall);
-    }
-  });
 
   course.draw(ctx);
   ball.draw(ctx);

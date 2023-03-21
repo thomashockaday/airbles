@@ -17,7 +17,7 @@ class Body {
     this.keyForce = 1;
     this.angKeyForce = 0.1;
     this.angle = 0;
-    this.angVel = 0;
+    this.angularVelocity = 0;
     this.player = false;
   }
 
