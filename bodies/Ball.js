@@ -1,24 +1,22 @@
 class Ball extends Body {
-  constructor(x, y) {
+  constructor(x, y, radius) {
     super();
-    this.components = [new Circle(x, y, 10)];
+    this.components = [new Circle(x, y, radius)];
     this.position = new Vector(x, y);
-
-    this.elasticity = 1;
-    this.velocity = new Vector(0, 0);
-    this.acceleration = new Vector(0, 0);
-    this.speed = 1;
-    this.radius = 10;
     this.colour = "#EA2027";
   }
 
-  update() {
-    this.acceleration = this.acceleration.add(new Vector(0, GRAVITY));
-    this.acceleration = this.acceleration.unit().multiply(this.speed);
-    this.velocity = this.velocity.add(this.acceleration);
-    this.velocity = this.velocity.multiply(1 - SURFACE_FRICTION);
-    this.position = this.position.add(this.velocity);
-
+  setPosition(x, y) {
+    this.position.set(x, y);
     this.components[0].position = this.position;
+  }
+
+  update() {
+    super.update();
+    this.velocity = this.velocity.add(new Vector(0, GRAVITY));
+    this.setPosition(
+      this.position.add(this.velocity).x,
+      this.position.add(this.velocity).y
+    );
   }
 }

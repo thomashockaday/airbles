@@ -17,7 +17,7 @@ function closestPointBw(ball, wall) {
 function penResBw(ball, wall) {
   let penVect = ball.position.subtract(closestPointBw(ball, wall));
   ball.position = ball.position.add(
-    penVect.unit().multiply(ball.radius - penVect.magnitude())
+    penVect.unit().multiply(10 - penVect.magnitude())
   );
 }
 

@@ -4,6 +4,11 @@ class Vector {
     this.y = y;
   }
 
+  set(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+
   add(v) {
     return new Vector(this.x + v.x, this.y + v.y);
   }

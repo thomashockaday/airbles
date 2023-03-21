@@ -7,7 +7,6 @@ canvas.height = 700;
 let step = 0;
 
 const GRAVITY = 0.2;
-const SURFACE_FRICTION = 0.05;
 
 const boundaryWalls = [
   new Wall(0, 0, canvas.width, 0),
@@ -31,7 +30,7 @@ const COURSE_BODIES = [
   new Wall(550, 50, 600, 0),
 ];
 
-const ball = new Ball(100, canvas.height - 200);
+const ball = new Ball(100, canvas.height - 200, 10);
 const course = new Course(COURSE_BODIES);
 
 function animate() {
@@ -67,8 +66,8 @@ function animate() {
 requestAnimationFrame(animate);
 
 canvas.addEventListener("click", (event) => {
-  ball.position.x = event.layerX - ball.radius;
-  ball.position.y = event.layerY - ball.radius;
-  ball.velocity = new Vector(0, 0);
-  ball.acceleration = new Vector(2, -2);
+  ball.position.x = event.layerX;
+  ball.position.y = event.layerY;
+  ball.velocity = new Vector(2, -2);
+  ball.acceleration = new Vector(0, 0);
 });
