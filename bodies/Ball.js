@@ -1,6 +1,7 @@
 class Ball extends Body {
   constructor(x, y) {
     super();
+    this.components = [new Circle(x, y, 10)];
     this.position = new Vector(x, y);
 
     this.elasticity = 1;
@@ -17,12 +18,7 @@ class Ball extends Body {
     this.velocity = this.velocity.add(this.acceleration);
     this.velocity = this.velocity.multiply(1 - SURFACE_FRICTION);
     this.position = this.position.add(this.velocity);
-  }
 
-  draw(ctx) {
-    ctx.fillStyle = this.colour;
-    ctx.beginPath();
-    ctx.arc(this.position.x, this.position.y, this.radius, 0, 2 * Math.PI);
-    ctx.fill();
+    this.components[0].position = this.position;
   }
 }
