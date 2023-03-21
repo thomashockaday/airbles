@@ -10,8 +10,8 @@ const GRAVITY = 0.2;
 const SURFACE_FRICTION = 0.05;
 
 class Course {
-  constructor(walls) {
-    this.walls = walls;
+  constructor(bodies) {
+    this.bodies = bodies;
 
     this.colour = "#6ab04c";
   }
@@ -19,8 +19,8 @@ class Course {
   draw(ctx) {
     ctx.fillStyle = this.colour;
 
-    this.walls.forEach((wall) => {
-      wall.draw(ctx);
+    this.bodies.forEach((body) => {
+      body.draw(ctx);
     });
   }
 }
@@ -32,7 +32,7 @@ const boundaryWalls = [
   new Wall(0, canvas.height, 0, 0),
 ];
 
-const courseWalls = [
+const BODIES = [
   new Wall(0, 600, 50, 600),
   new Wall(50, 600, 100, 590),
   new Wall(100, 590, 150, 570),
@@ -48,7 +48,7 @@ const courseWalls = [
 ];
 
 const ball = new Ball(100, canvas.height - 200);
-const course = new Course(courseWalls);
+const course = new Course(BODIES);
 
 function animate() {
   step++;
@@ -62,10 +62,10 @@ function animate() {
 
   ball.update();
 
-  course.walls.forEach((wall) => {
-    if (collDetBw(ball, wall)) {
-      penResBw(ball, wall);
-      collResBw(ball, wall);
+  course.bodies.forEach((body) => {
+    if (collDetBw(ball, body)) {
+      penResBw(ball, body);
+      collResBw(ball, body);
     }
   });
 
