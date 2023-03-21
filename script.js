@@ -9,22 +9,6 @@ let step = 0;
 const GRAVITY = 0.2;
 const SURFACE_FRICTION = 0.05;
 
-class Course {
-  constructor(bodies) {
-    this.bodies = bodies;
-
-    this.colour = "#6ab04c";
-  }
-
-  draw(ctx) {
-    ctx.fillStyle = this.colour;
-
-    this.bodies.forEach((body) => {
-      body.draw(ctx);
-    });
-  }
-}
-
 const boundaryWalls = [
   new Wall(0, 0, canvas.width, 0),
   new Wall(canvas.width, 0, canvas.width, canvas.height),
