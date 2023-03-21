@@ -47,14 +47,14 @@ function animate() {
   ball.update();
 
   course.bodies.forEach((body) => {
-    if (collDetBw(ball, body)) {
+    if (sat(ball.components[0], body.components[0])) {
       penResBw(ball, body);
       collResBw(ball, body);
     }
   });
 
   boundaryWalls.forEach((wall) => {
-    if (collDetBw(ball, wall)) {
+    if (sat(ball.components[0], wall.components[0])) {
       penResBw(ball, wall);
       collResBw(ball, wall);
     }

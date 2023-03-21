@@ -1,7 +1,8 @@
 class Circle {
   constructor(x, y, radius) {
+    this.vertex = [];
     this.position = new Vector(x, y);
-    this.radius = 10;
+    this.radius = radius;
     this.colour = "#EA2027";
   }
 

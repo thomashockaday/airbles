@@ -1,5 +1,7 @@
 class Line {
   constructor(x1, y1, x2, y2) {
+    this.vertex = [new Vector(x1, y1), new Vector(x2, y2)];
+    this.direction = this.vertex[1].subtract(this.vertex[0]).unit();
     this.start = new Vector(x1, y1);
     this.end = new Vector(x2, y2);
   }

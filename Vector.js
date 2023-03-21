@@ -20,6 +20,10 @@ class Vector {
     return new Vector(this.x * n, this.y * n);
   }
 
+  normal() {
+    return new Vector(-this.y, this.x).unit();
+  }
+
   unit() {
     if (this.magnitude() === 0) {
       return new Vector(0, 0);
