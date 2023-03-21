@@ -4,6 +4,15 @@ class Wall {
     this.end = new Vector(x2, y2);
   }
 
+  draw(ctx) {
+    ctx.beginPath();
+    ctx.moveTo(this.start.x, this.start.y);
+    ctx.lineTo(this.end.x, this.end.y);
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+    ctx.closePath();
+  }
+
   unit() {
     return this.end.subtract(this.start).unit();
   }

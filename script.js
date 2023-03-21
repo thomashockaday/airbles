@@ -20,22 +20,8 @@ class Course {
     ctx.fillStyle = this.colour;
 
     this.walls.forEach((wall) => {
-      ctx.beginPath();
-      ctx.moveTo(wall.start.x, wall.start.y);
-      ctx.lineTo(wall.end.x, wall.end.y);
-      // ctx.strokeStyle = "black";
-      // ctx.stroke();
-      ctx.closePath();
+      wall.draw(ctx);
     });
-
-    ctx.beginPath();
-    ctx.moveTo(this.walls[0].start.x, this.walls[0].start.y);
-
-    for (let i = 1; i < this.walls.length; i++) {
-      ctx.lineTo(this.walls[i].start.x, this.walls[i].start.y);
-    }
-
-    ctx.fill();
   }
 }
 
@@ -59,9 +45,6 @@ const courseWalls = [
   new Wall(450, 240, 500, 150),
   new Wall(500, 150, 550, 50),
   new Wall(550, 50, 600, 0),
-  new Wall(600, 0, 600, 700),
-  new Wall(600, 700, 0, 700),
-  new Wall(0, 700, 0, 50),
 ];
 
 const ball = new Ball(100, canvas.height - 200);
