@@ -16,7 +16,7 @@ const boundaryWalls = [
   new Wall(0, canvas.height, 0, 0),
 ];
 
-const BODIES = [
+const COURSE_BODIES = [
   new Wall(0, 600, 50, 600),
   new Wall(50, 600, 100, 590),
   new Wall(100, 590, 150, 570),
@@ -32,7 +32,7 @@ const BODIES = [
 ];
 
 const ball = new Ball(100, canvas.height - 200);
-const course = new Course(BODIES);
+const course = new Course(COURSE_BODIES);
 
 function animate() {
   step++;

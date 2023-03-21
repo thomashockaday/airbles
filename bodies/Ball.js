@@ -1,5 +1,6 @@
-class Ball {
+class Ball extends Body {
   constructor(x, y) {
+    super();
     this.position = new Vector(x, y);
 
     this.elasticity = 1;
