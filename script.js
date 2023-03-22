@@ -6,7 +6,7 @@ canvas.height = 700;
 
 let step = 0;
 
-const GRAVITY = 0.2;
+const GRAVITY = 0.8;
 
 let COLLISIONS = [];
 
@@ -33,7 +33,8 @@ const COURSE_BODIES = [
 ];
 
 const ball = new Ball(100, canvas.height - 200, 10, 5);
-ball.maxSpeed = 10;
+ball.maxSpeed = 12;
+ball.elasticity = 4;
 const course = new Course(COURSE_BODIES);
 
 function animate() {
@@ -84,6 +85,6 @@ requestAnimationFrame(animate);
 canvas.addEventListener("click", (event) => {
   ball.position.x = event.layerX;
   ball.position.y = event.layerY;
-  ball.velocity = new Vector(2, -2);
+  ball.velocity = new Vector(20, -2);
   ball.acceleration = new Vector(0, 0);
 });

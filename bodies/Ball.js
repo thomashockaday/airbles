@@ -10,6 +10,7 @@ class Ball extends Body {
       this.inverseMass = 1 / this.mass;
     }
     this.colour = "#EA2027";
+    this.friction = 0.04;
   }
 
   setPosition(x, y) {
