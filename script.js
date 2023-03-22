@@ -35,7 +35,7 @@ const COURSE_BODIES = [
 ];
 
 const ball = new Ball(100, canvas.height - 300, 10, 5);
-ball.maxSpeed = 12;
+ball.maxSpeed = 40;
 ball.elasticity = 4;
 const course = new Course(COURSE_BODIES);
 
@@ -84,13 +84,46 @@ function animate() {
 
   course.draw(ctx);
   ball.draw(ctx);
+
+  if (drawing) {
+    ctx.beginPath();
+    ctx.moveTo(startPosition.x, startPosition.y);
+    ctx.lineTo(endPosition.x, endPosition.y);
+    ctx.arc(endPosition.x, endPosition.y, 10, 0, 2 * Math.PI);
+    ctx.strokeStyle = "red";
+    ctx.stroke();
+    ctx.closePath();
+  }
 }
 
 requestAnimationFrame(animate);
 
-canvas.addEventListener("click", (event) => {
-  ball.position.x = event.layerX;
-  ball.position.y = event.layerY;
-  ball.velocity = new Vector(20, -2);
+// canvas.addEventListener("click", (event) => {
+//   ball.position.x = event.layerX;
+//   ball.position.y = event.layerY;
+//   ball.velocity = new Vector(20, -2);
+//   ball.acceleration = new Vector(0, 0);
+// });
+
+let drawing = false;
+let startPosition = null;
+let endPosition = null;
+
+canvas.addEventListener("mousedown", (event) => {
+  drawing = true;
+  startPosition = new Vector(event.layerX, event.layerY);
+  endPosition = startPosition;
+});
+
+canvas.addEventListener("mouseup", (event) => {
+  drawing = false;
+  const newVelocity = startPosition.subtract(endPosition);
+  ball.velocity = newVelocity;
   ball.acceleration = new Vector(0, 0);
+});
+
+canvas.addEventListener("mousemove", (event) => {
+  if (drawing) {
+    endPosition = new Vector(event.layerX, event.layerY);
+  }
 });
