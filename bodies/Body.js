@@ -23,6 +23,9 @@ class Body {
 
   update() {
     this.acceleration = this.acceleration.unit().multiply(this.keyForce);
+    if (this.mass > 0) {
+      this.acceleration = this.acceleration.add(new Vector(0, GRAVITY));
+    }
     this.velocity = this.velocity.add(this.acceleration);
     this.velocity = this.velocity.multiply(1 - this.friction);
     if (this.velocity.magnitude() > this.maxSpeed && this.maxSpeed !== 0) {

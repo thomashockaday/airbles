@@ -60,10 +60,10 @@ class CollisionData {
         impulseAugmentation2);
     const impulseVec = this.normal.multiply(impulse);
 
-    this.o1.vel = this.o1.velocity.add(
+    this.o1.velocity = this.o1.velocity.add(
       impulseVec.multiply(this.o1.inverseMass)
     );
-    this.o2.vel = this.o2.velocity.add(
+    this.o2.velocity = this.o2.velocity.add(
       impulseVec.multiply(-this.o2.inverseMass)
     );
 

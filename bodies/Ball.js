@@ -19,7 +19,6 @@ class Ball extends Body {
 
   update() {
     super.update();
-    this.velocity = this.velocity.add(new Vector(0, GRAVITY));
     this.setPosition(
       this.position.add(this.velocity).x,
       this.position.add(this.velocity).y
