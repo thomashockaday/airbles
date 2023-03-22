@@ -28,7 +28,7 @@ function sat(o1, o2) {
   let axes = findAxes(o1, o2);
   let proj1 = 0;
   let proj2 = 0;
-  let firstShapeAxes = 1;
+  let firstShapeAxes = getShapeAxes(o1);
 
   for (let i = 0; i < axes.length; i++) {
     proj1 = projShapeOntoAxis(axes[i], o1);
@@ -123,6 +123,7 @@ function findAxes(o1, o2) {
     } else {
       axes.push(new Vector(Math.random(), Math.random()).unit());
     }
+
     return axes;
   }
 
@@ -136,6 +137,11 @@ function findAxes(o1, o2) {
     axes.push(o1.direction.normal());
   }
 
+  if (o1 instanceof Rectangle) {
+    axes.push(o1.direction.normal());
+    axes.push(o1.direction);
+  }
+
   if (o2 instanceof Circle) {
     axes.push(
       closestVertexToPoint(o1, o2.position).subtract(o2.position).unit()
@@ -144,6 +150,11 @@ function findAxes(o1, o2) {
 
   if (o2 instanceof Line) {
     axes.push(o2.direction.normal());
+  }
+
+  if (o2 instanceof Rectangle) {
+    axes.push(o2.direction.normal());
+    axes.push(o2.direction);
   }
 
   return axes;
@@ -161,6 +172,16 @@ function closestVertexToPoint(o, point) {
   }
 
   return closestVertex;
+}
+
+function getShapeAxes(o) {
+  if (o instanceof Circle || o instanceof Line) {
+    return 1;
+  }
+
+  if (o instanceof Rectangle) {
+    return 2;
+  }
 }
 
 function setBallVerticesAlongAxis(o, axis) {

@@ -18,7 +18,7 @@ const boundaryWalls = [
 ];
 
 const COURSE_BODIES = [
-  new Wall(0, 600, 500, 600),
+  // new Wall(0, 600, 500, 600),
   // new Wall(50, 600, 100, 590),
   // new Wall(100, 590, 150, 570),
   // new Wall(150, 570, 200, 540),
@@ -30,9 +30,10 @@ const COURSE_BODIES = [
   // new Wall(450, 240, 500, 150),
   // new Wall(500, 150, 550, 50),
   // new Wall(550, 50, 600, 0),
+  new Box(0, 500, 500, 500, 500),
 ];
 
-const ball = new Ball(100, canvas.height - 200, 10, 5);
+const ball = new Ball(100, canvas.height - 300, 10, 5);
 ball.maxSpeed = 12;
 ball.elasticity = 4;
 const course = new Course(COURSE_BODIES);
@@ -42,6 +43,10 @@ function animate() {
   requestAnimationFrame(animate);
 
   COLLISIONS = [];
+
+  course.bodies.forEach((body) => {
+    body.update();
+  });
 
   ball.update();
 
