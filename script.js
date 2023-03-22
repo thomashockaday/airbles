@@ -31,6 +31,7 @@ const COURSE_BODIES = [
   // new Wall(500, 150, 550, 50),
   // new Wall(550, 50, 600, 0),
   new Box(0, 500, 500, 500, 500),
+  new Box(700, 300, 400, 700, 200),
 ];
 
 const ball = new Ball(100, canvas.height - 300, 10, 5);
