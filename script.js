@@ -82,8 +82,12 @@ function animate() {
   ctx.fillStyle = "#7ed6df";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+  ctx.save();
+  ctx.scale(0.5, 0.5);
+  ctx.translate(-(ball.position.x - 200), 0);
   course.draw(ctx);
   ball.draw(ctx);
+  ctx.restore();
 
   if (drawing) {
     ctx.beginPath();
