@@ -18,6 +18,7 @@ const boundaryWalls = [
 ];
 
 const goal = new Box(625, 1200, 575, 1200, 50);
+goal.colour = "#f39c12";
 
 const COURSE_BODIES = [
   new Box(0, 500, 500, 500, 500),
@@ -28,6 +29,8 @@ const COURSE_BODIES = [
 const ball = new Ball(100, canvas.height - 300, 10, 5);
 ball.maxSpeed = 40;
 ball.elasticity = 4;
+ball.colour = "#EA2027";
+
 const course = new Course(COURSE_BODIES);
 
 function animate() {
@@ -83,9 +86,8 @@ function animate() {
   ctx.scale(0.5, 0.5);
   ctx.translate(-(ball.position.x - 200), 0);
   course.draw(ctx);
-  ball.draw(ctx);
-  ctx.fillStyle = "yellow";
   goal.draw(ctx);
+  ball.draw(ctx);
   ctx.restore();
 
   if (drawing) {
@@ -118,7 +120,7 @@ canvas.addEventListener("mousedown", (event) => {
   endPosition = startPosition;
 });
 
-canvas.addEventListener("mouseup", (event) => {
+canvas.addEventListener("mouseup", () => {
   drawing = false;
   const newVelocity = startPosition.subtract(endPosition);
   ball.velocity = newVelocity;

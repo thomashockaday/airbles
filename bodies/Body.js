@@ -35,6 +35,10 @@ class Body {
   }
 
   draw(ctx) {
+    if (this.colour) {
+      ctx.fillStyle = this.colour;
+    }
+
     this.components.forEach((component) => {
       component.draw(ctx);
     });
