@@ -88,15 +88,21 @@ function animate() {
   course.draw(ctx);
   goal.draw(ctx);
   ball.draw(ctx);
+
   ctx.restore();
 
   if (drawing) {
+    ctx.strokeStyle = "#ecf0f1";
+    ctx.fillStyle = "#ecf0f1";
     ctx.beginPath();
     ctx.moveTo(startPosition.x, startPosition.y);
     ctx.lineTo(endPosition.x, endPosition.y);
-    ctx.arc(endPosition.x, endPosition.y, 10, 0, 2 * Math.PI);
-    ctx.strokeStyle = "red";
     ctx.stroke();
+    ctx.closePath();
+    ctx.beginPath();
+    ctx.moveTo(endPosition.x, endPosition.y);
+    ctx.arc(endPosition.x, endPosition.y, 10, 0, 2 * Math.PI);
+    ctx.fill();
     ctx.closePath();
   }
 }
