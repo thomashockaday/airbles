@@ -17,13 +17,15 @@ const boundaryWalls = [
   new Wall(0, canvas.height, 0, 0),
 ];
 
-const goal = new Box(625, 1200, 575, 1200, 50);
+const goal = new Box(625, 1250, 575, 1250, 50);
 goal.colour = "#f39c12";
 
 const COURSE_BODIES = [
   new Box(0, 500, 500, 500, 500),
   new Box(700, 300, 1200, 300, 500),
-  new Box(350, 1200, 850, 1200, 500),
+  new Box(350, 1200, 575, 1200, 225),
+  new Box(625, 1200, 850, 1200, 225),
+  new Box(350, 1250, 850, 1250, 500),
 ];
 
 const ball = new Ball(100, canvas.height - 300, 10, 5);
@@ -59,6 +61,8 @@ function animate() {
   let bestSat = collide(ball, goal);
   if (bestSat) {
     console.log("goal!");
+    ball.maxSpeed = 10;
+    ball.acceleration.set(0, 0);
   }
 
   // boundaryWalls.forEach((wall) => {
