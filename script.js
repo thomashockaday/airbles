@@ -124,21 +124,31 @@ let drawing = false;
 let startPosition = null;
 let endPosition = null;
 
-canvas.addEventListener("mousedown", (event) => {
+function handleMousedown(event) {
   drawing = true;
   startPosition = new Vector(event.layerX, event.layerY);
   endPosition = startPosition;
-});
+}
 
-canvas.addEventListener("mouseup", () => {
+function handleMouseup(event) {
   drawing = false;
   const newVelocity = startPosition.subtract(endPosition);
   ball.velocity = newVelocity;
   ball.acceleration = new Vector(0, 0);
-});
+}
 
-canvas.addEventListener("mousemove", (event) => {
+function handleMousemove(event) {
   if (drawing) {
     endPosition = new Vector(event.layerX, event.layerY);
   }
-});
+}
+
+canvas.addEventListener("mousedown", handleMousedown);
+canvas.addEventListener("touchstart", handleMousedown);
+
+canvas.addEventListener("mouseup", handleMouseup);
+canvas.addEventListener("touchend", handleMouseup);
+canvas.addEventListener("touchcancel", handleMouseup);
+
+canvas.addEventListener("mousemove", handleMousemove);
+canvas.addEventListener("touchmove", handleMousemove);
