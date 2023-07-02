@@ -115,7 +115,7 @@ function handleMousedown(event) {
   endPosition = startPosition;
 }
 
-function handleMouseup(event) {
+function handleMouseup() {
   drawing = false;
   const newVelocity = startPosition.subtract(endPosition);
   ball.velocity = newVelocity;
