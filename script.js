@@ -114,13 +114,6 @@ function animate() {
 
 requestAnimationFrame(animate);
 
-// canvas.addEventListener("click", (event) => {
-//   ball.position.x = event.layerX;
-//   ball.position.y = event.layerY;
-//   ball.velocity = new Vector(20, -2);
-//   ball.acceleration = new Vector(0, 0);
-// });
-
 let drawing = false;
 let startPosition = null;
 let endPosition = null;
