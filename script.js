@@ -88,7 +88,8 @@ function animate() {
 
   ctx.save();
   ctx.scale(0.5, 0.5);
-  ctx.translate(-(ball.position.x - 200), 0);
+  // Camera effect
+  // ctx.translate(-(ball.position.x - 200), 0);
   course.draw(ctx);
   goal.draw(ctx);
   ball.draw(ctx);
