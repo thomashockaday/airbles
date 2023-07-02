@@ -4,8 +4,6 @@ const ctx = canvas.getContext("2d");
 canvas.width = 500;
 canvas.height = 700;
 
-let step = 0;
-
 const GRAVITY = 0.8;
 
 let COLLISIONS = [];
@@ -31,7 +29,6 @@ const COURSE_BODIES = [
 const course = new Course(COURSE_BODIES);
 
 function animate() {
-  step++;
   requestAnimationFrame(animate);
 
   COLLISIONS = [];
