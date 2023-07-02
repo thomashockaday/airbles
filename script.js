@@ -10,15 +10,13 @@ const GRAVITY = 0.8;
 
 let COLLISIONS = [];
 
-const boundaryWalls = [
-  new Wall(0, 0, canvas.width, 0),
-  new Wall(canvas.width, 0, canvas.width, canvas.height),
-  new Wall(canvas.width, canvas.height, 0, canvas.height),
-  new Wall(0, canvas.height, 0, 0),
-];
-
 const goal = new Box(625, 1250, 575, 1250, 50);
 goal.colour = "#f39c12";
+
+const ball = new Ball(100, canvas.height - 300, 10, 5);
+ball.maxSpeed = 40;
+ball.elasticity = 4;
+ball.colour = "#EA2027";
 
 const COURSE_BODIES = [
   new Box(0, 500, 500, 500, 500),
@@ -26,12 +24,9 @@ const COURSE_BODIES = [
   new Box(350, 1200, 575, 1200, 225),
   new Box(625, 1200, 850, 1200, 225),
   new Box(350, 1250, 850, 1250, 500),
+  ball,
+  // goal,
 ];
-
-const ball = new Ball(100, canvas.height - 300, 10, 5);
-ball.maxSpeed = 40;
-ball.elasticity = 4;
-ball.colour = "#EA2027";
 
 const course = new Course(COURSE_BODIES);
 
@@ -45,16 +40,27 @@ function animate() {
     body.update();
   });
 
-  ball.update();
-  goal.update();
-
-  course.bodies.forEach((body) => {
-    let bestSat = collide(ball, body);
-
-    if (bestSat) {
-      COLLISIONS.push(
-        new CollisionData(ball, body, bestSat.axis, bestSat.pen, bestSat.vertex)
-      );
+  course.bodies.forEach((body, index) => {
+    for (
+      let bodyPair = index + 1;
+      bodyPair < course.bodies.length;
+      bodyPair++
+    ) {
+      if (
+        (body.mass !== 0 || course.bodies[bodyPair].mass !== 0) &&
+        collide(body, course.bodies[bodyPair])
+      ) {
+        let bestSat = collide(body, course.bodies[bodyPair]);
+        COLLISIONS.push(
+          new CollisionData(
+            body,
+            course.bodies[bodyPair],
+            bestSat.axis,
+            bestSat.pen,
+            bestSat.vertex
+          )
+        );
+      }
     }
   });
 
@@ -64,16 +70,6 @@ function animate() {
     ball.maxSpeed = 10;
     ball.acceleration.set(0, 0);
   }
-
-  // boundaryWalls.forEach((wall) => {
-  //   let bestSat = collide(ball, wall);
-
-  //   if (bestSat) {
-  //     COLLISIONS.push(
-  //       new CollisionData(ball, wall, bestSat.axis, bestSat.pen, bestSat.vertex)
-  //     );
-  //   }
-  // });
 
   COLLISIONS.forEach((collision) => {
     collision.penetrationResolution();
@@ -91,8 +87,6 @@ function animate() {
   // Camera effect
   // ctx.translate(-(ball.position.x - 200), 0);
   course.draw(ctx);
-  goal.draw(ctx);
-  ball.draw(ctx);
 
   ctx.restore();
 
