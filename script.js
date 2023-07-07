@@ -7,6 +7,7 @@ canvas.height = 700;
 const GRAVITY = 0.8;
 
 let COLLISIONS = [];
+let moves = 0;
 
 const goal = new Box(625, 1250, 575, 1250, 50);
 goal.colour = "#f39c12";
@@ -120,6 +121,7 @@ function handleMouseup() {
   const newVelocity = startPosition.subtract(endPosition);
   ball.velocity = newVelocity;
   ball.acceleration = new Vector(0, 0);
+  moves++;
 }
 
 function handleMousemove(event) {
